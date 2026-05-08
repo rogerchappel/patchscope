@@ -26,4 +26,4 @@
 - [x] Add parser, secret, risk, and renderer tests.
 - [x] Add real fixture-backed CLI smoke script.
 - [x] Document safety model, examples, contributing, and limitations.
-- [ ] Publish GitHub repository and apply best-effort branch protection.
+- [x] Publish GitHub repository and apply best-effort branch protection.
