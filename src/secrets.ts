@@ -31,7 +31,7 @@ export function detectSecrets(files: FilePatch[]): SecretFinding[] {
         if (pattern.regex.test(line.content)) {
           findings.push({
             file: file.path,
-            line: line.newLine,
+            ...(line.newLine === undefined ? {} : { line: line.newLine }),
             label: pattern.label,
             redacted: redactLine(line.content, pattern.regex)
           });

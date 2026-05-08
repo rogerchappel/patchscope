@@ -22,7 +22,11 @@ export function parseArgs(argv: string[]): ParsedArgs {
     else if (item === '--worktree') args.worktree = true;
     else if (item === '--stdin' || item === '-') args.stdin = true;
     else if (item === '--json') args.json = true;
-    else if (item === '--out') args.out = rest[++index];
+    else if (item === '--out') {
+      const out = rest[++index];
+      if (!out) throw new Error('--out requires a file path');
+      args.out = out;
+    }
     else if (item.startsWith('--out=')) args.out = item.slice('--out='.length);
     else if (item === '--fail-on') args.failOn = (rest[++index] ?? '').split(',');
     else if (item.startsWith('--fail-on=')) args.failOn = item.slice('--fail-on='.length).split(',');
