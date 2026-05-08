@@ -15,7 +15,9 @@ export function redactSecret(value: string): string {
 
 function redactLine(line: string, pattern: RegExp): string {
   pattern.lastIndex = 0;
-  return line.replace(pattern, (match: string, captured?: string) => {
+  return line.replace(pattern, (...parts: unknown[]) => {
+    const match = String(parts[0]);
+    const captured = parts.slice(1, -2).find((part): part is string => typeof part === 'string' && part.length > 0);
     if (captured) return match.replace(captured, redactSecret(captured));
     return redactSecret(match);
   });
