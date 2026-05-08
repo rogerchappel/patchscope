@@ -1,21 +1,13 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## 0.1.0
 
-This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
-format and uses semantic versioning when versioned releases are published.
+Initial MVP release:
 
-## [Unreleased]
-
-### Added
-
-- Initial project setup.
-
-## Release Links
-
-- Unreleased:
-  `https://github.com/rogerchappel/patchscope/compare/...HEAD`
-- Latest release:
-  `https://github.com/rogerchappel/patchscope/releases/latest`
-
-Replace placeholder links once the first release tag exists.
+- Parse unified diff input from files, stdin, staged diffs, and worktree diffs.
+- Summarize changed files by directory, extension, and subsystem.
+- Detect redacted secret-like additions.
+- Classify review risk signals.
+- Suggest likely local verification commands.
+- Render deterministic Markdown and JSON reports.
+- Include fixture-backed tests and smoke checks.
