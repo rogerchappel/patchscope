@@ -1,58 +1,19 @@
 # Security Policy
 
-## Supported Versions
+PatchScope is a local-first CLI. It does not make network calls, collect telemetry, or upload patch content.
 
-Replace this section with the supported versions for `patchscope`.
+## Reporting a vulnerability
 
-Example:
+Please report security issues through GitHub's private vulnerability reporting for this repository when available, or open a minimal issue that does not disclose exploit details.
 
-```md
-| Version | Supported |
-| --- | --- |
-| .x | Yes |
-| < .0 | No |
-```
+## Secret handling
 
-If the project does not publish versioned releases yet, say that clearly.
+PatchScope can detect common secret-like additions, but it is not a full secret scanner. Findings are redacted in output. If PatchScope flags a secret:
 
-## Reporting a Vulnerability
+1. Remove it from the patch.
+2. Rotate the underlying credential.
+3. Check git history and CI logs before assuming containment.
 
-Please do not report suspected vulnerabilities in public issues, pull requests, or discussions.
+## Supported versions
 
-Ask maintainers for the private security reporting path before sharing details.
-
-If no private reporting path exists yet, ask maintainers through public project channels for a private reporting path. Do not include exploit details, secrets, personal data, or sensitive technical details in public messages.
-
-## What to Include
-
-When a private reporting path is available, include:
-
-- A clear description of the issue.
-- Affected versions, files, packages, workflows, or configuration.
-- Steps to reproduce, proof of concept, or attack scenario when safe to share.
-- Potential impact.
-- Suggested mitigation, if known.
-
-## Response Expectations
-
-Maintainers review good-faith reports as capacity allows.
-
-Do not imply paid support, guaranteed response times, guaranteed fixes, or service-level agreements unless `patchscope` explicitly provides them.
-
-## Scope
-
-In scope:
-
-- Vulnerabilities in patchscope.
-- Insecure default configuration shipped by this project.
-- CI, release, or dependency guidance maintained by this project.
-
-Out of scope:
-
-- General support requests.
-- Requests for guaranteed maintenance timelines.
-- Issues in unrelated downstream projects.
-
-## Disclosure
-
-Coordinate disclosure with maintainers before publishing vulnerability details.
+Only the latest released version is supported during the initial 0.x phase.
