@@ -1,0 +1,32 @@
+{
+  "name": "patchscope",
+  "purpose": "Local-first patch risk radar for developer and agent review loops.",
+  "commands": {
+    "scanStagedMarkdown": "patchscope scan --staged --out patchscope.md",
+    "scanStagedJson": "patchscope scan --staged --json",
+    "suggestStagedTests": "patchscope suggest-tests --staged",
+    "agentGate": "patchscope scan --staged --fail-on secret,huge-generated"
+  },
+  "riskClasses": [
+    "secret",
+    "huge-generated",
+    "generated",
+    "binary",
+    "lockfile",
+    "large-change",
+    "missing-tests",
+    "missing-docs",
+    "delete-heavy"
+  ],
+  "exitCodes": {
+    "0": "success",
+    "1": "requested fail-on risk found",
+    "2": "usage or runtime error"
+  },
+  "safety": {
+    "network": false,
+    "telemetry": false,
+    "hiddenWrites": false,
+    "secretRedaction": true
+  }
+}
