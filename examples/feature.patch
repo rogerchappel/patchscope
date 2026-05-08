@@ -1,0 +1,19 @@
+diff --git a/src/service.ts b/src/service.ts
+index 1111111..2222222 100644
+--- a/src/service.ts
++++ b/src/service.ts
+@@ -1,4 +1,7 @@
+ export function endpoint() {
+-  return '/old';
++  const token = process.env.API_TOKEN;
++  return token ? '/new' : '/fallback';
+ }
++
++export const timeoutMs = 5000;
+diff --git a/README.md b/README.md
+index 3333333..4444444 100644
+--- a/README.md
++++ b/README.md
+@@ -10,3 +10,4 @@ Usage
+ Run the service.
++The endpoint now supports token-aware routing.
