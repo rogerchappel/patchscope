@@ -91,5 +91,13 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "typescript": "^5.7.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/patchscope.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/patchscope/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/patchscope#readme"
 }
