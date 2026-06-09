@@ -126,3 +126,18 @@ Issues and small PRs are welcome. Keep changes deterministic, fixture-backed, an
 ## License
 
 MIT
+
+## Release Readiness
+
+Use the checked-in scripts before opening or publishing a release:
+
+```sh
+npm run check
+npm test
+npm run build
+npm run smoke
+npm run package:smoke
+npm run release:check
+```
+
+The package smoke uses `npm pack --dry-run` so the published file list can be reviewed without publishing.
