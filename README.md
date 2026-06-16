@@ -119,6 +119,13 @@ node dist/cli.js scan examples/secret.patch --json
 node dist/cli.js suggest-tests examples/generated.patch
 ```
 
+For a local demo that scans the feature and secret fixtures, writes Markdown and
+JSON reports, and verifies that the secret-like fixture stays redacted, run:
+
+```sh
+bash examples/redacted-secret-demo.sh
+```
+
 ## Contributing
 
 Issues and small PRs are welcome. Keep changes deterministic, fixture-backed, and local-first. See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md).
