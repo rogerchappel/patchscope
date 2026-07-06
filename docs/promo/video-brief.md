@@ -1,31 +1,32 @@
 # PatchScope Video Brief
 
-## Working title
+## Angle
 
-Catch risky patch signals before review without uploading the diff.
+PatchScope turns a noisy git patch into a compact pre-review checklist: changed
+areas, risk classes, redacted secret-like additions, and likely local checks.
 
-## Demo promise
+## 45-Second Flow
 
-Show PatchScope scanning checked-in patch fixtures and producing deterministic
-Markdown and JSON reports. The key moment is the secret-like fixture: the report
-should flag the risk while keeping the added value redacted.
+1. Show `examples/feature.patch` as a plain unified diff.
+2. Run `node dist/cli.js scan examples/feature.patch --out /tmp/patchscope-feature.md`.
+3. Open the Markdown report and highlight touched paths, risk classes, and
+   suggested verification.
+4. Run `bash examples/redacted-secret-demo.sh`.
+5. Show that the demo wrote JSON and Markdown reports while checking that the
+   secret-like fixture stays redacted.
 
-## 60-second outline
+## On-Screen Commands
 
-1. Open `examples/feature.patch`, `examples/generated.patch`, and
-   `examples/secret.patch` to show the fixture set.
-2. Run `bash examples/redacted-secret-demo.sh`.
-3. Open the temporary Markdown report for `feature.patch` and show changed
-   paths, risk classes, and suggested verification commands.
-4. Open the JSON report for `secret.patch` and show the `secret` risk without
-   exposing a raw token value.
-5. Close with the safety model: local-first, no telemetry, no hidden writes, and
-   deterministic output ordering.
+```sh
+npm install
+npm run build
+node dist/cli.js scan examples/feature.patch --out /tmp/patchscope-feature.md
+bash examples/redacted-secret-demo.sh
+```
 
-## Grounded claims
+## Honest Limits
 
-- PatchScope accepts patch files, stdin, staged changes, or the worktree.
-- Markdown and JSON output are documented CLI modes.
-- Secret-like additions are reported with redaction.
-- The tool suggests likely verification commands from changed paths and package
-  scripts; it is not a SAST scanner or CI replacement.
+- PatchScope is not a SAST scanner, LLM reviewer, or CI replacement.
+- It does not modify source files.
+- It reports deterministic local evidence that should be paired with the normal
+  project test suite.
