@@ -126,6 +126,11 @@ JSON reports, and verifies that the secret-like fixture stays redacted, run:
 bash examples/redacted-secret-demo.sh
 ```
 
+For a step-by-step pre-review recipe, see
+[`docs/tutorials/pre-review-check.md`](docs/tutorials/pre-review-check.md).
+For a short video outline grounded in the checked-in fixtures, see
+[`docs/promo/video-brief.md`](docs/promo/video-brief.md).
+
 ## Contributing
 
 Issues and small PRs are welcome. Keep changes deterministic, fixture-backed, and local-first. See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md).
