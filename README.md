@@ -16,16 +16,22 @@ Raw diffs are noisy. PatchScope turns them into a compact map:
 
 ## Install
 
+Build and install the package directly from this repository:
+
 ```sh
-npm install -g patchscope
+git clone https://github.com/rogerchappel/patchscope.git
+cd patchscope
+npm ci
+npm run build
+package_archive="$(npm pack)"
+npm install --global "./$package_archive"
 ```
 
-For local development in this repository:
+Verify the installed CLI:
 
 ```sh
-npm install
-npm run build
-node dist/cli.js scan examples/feature.patch
+patchscope version
+patchscope scan examples/feature.patch
 ```
 
 ## Quick start
@@ -152,7 +158,8 @@ npm run package:smoke
 npm run release:check
 ```
 
-The package smoke uses `npm pack --dry-run` so the published file list can be reviewed without publishing.
+The package smoke builds a tarball, installs it into a clean temporary prefix,
+and runs `patchscope version` and `patchscope scan` from that installed artifact.
 
 ## Development
 

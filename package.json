@@ -60,6 +60,9 @@
     "dist/summary.d.ts",
     "dist/summary.js",
     "dist/summary.js.map",
+    "dist/tests.d.ts",
+    "dist/tests.js",
+    "dist/tests.js.map",
     "dist/types.d.ts",
     "dist/types.js",
     "dist/types.js.map",
@@ -75,7 +78,7 @@
     "check": "tsc --noEmit",
     "test": "npm run build && node --test dist/*.test.js",
     "smoke": "npm run build && bash scripts/smoke.sh",
-    "package:smoke": "npm pack --dry-run",
+    "package:smoke": "npm run build && bash scripts/package-smoke.sh",
     "release:check": "npm test && npm run check && npm run build && npm run smoke && npm run package:smoke"
   },
   "keywords": [
