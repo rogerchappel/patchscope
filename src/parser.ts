@@ -5,12 +5,67 @@ function stripPrefix(path: string): string {
   return path.replace(/^[ab]\//, '');
 }
 
+const ESCAPED_BYTES: Record<string, number> = {
+  a: 0x07,
+  b: 0x08,
+  t: 0x09,
+  n: 0x0a,
+  v: 0x0b,
+  f: 0x0c,
+  r: 0x0d,
+  '"': 0x22,
+  '\\': 0x5c
+};
+
+function readGitPathToken(value: string, offset = 0): { path: string; end: number } | null {
+  while (value[offset] === ' ') offset += 1;
+  if (offset >= value.length) return null;
+
+  if (value[offset] !== '"') {
+    const end = value.indexOf(' ', offset);
+    return { path: value.slice(offset, end < 0 ? value.length : end), end: end < 0 ? value.length : end };
+  }
+
+  const bytes: number[] = [];
+  let index = offset + 1;
+  while (index < value.length && value[index] !== '"') {
+    const character = value[index]!;
+    if (character !== '\\') {
+      const codePoint = value.codePointAt(index)!;
+      const literal = String.fromCodePoint(codePoint);
+      bytes.push(...Buffer.from(literal));
+      index += literal.length;
+      continue;
+    }
+
+    index += 1;
+    const escape = value[index];
+    if (escape === undefined) return null;
+    const octal = value.slice(index).match(/^[0-7]{1,3}/)?.[0];
+    if (octal) {
+      bytes.push(Number.parseInt(octal, 8));
+      index += octal.length;
+      continue;
+    }
+    bytes.push(ESCAPED_BYTES[escape] ?? escape.charCodeAt(0));
+    index += 1;
+  }
+  if (value[index] !== '"') return null;
+  return { path: Buffer.from(bytes).toString('utf8'), end: index + 1 };
+}
+
 function pathFromDiffHeader(line: string): { oldPath: string | null; newPath: string | null; path: string } {
-  const match = /^diff --git a\/(.+?) b\/(.+)$/.exec(line);
-  if (!match) return { oldPath: null, newPath: null, path: 'unknown' };
-  const oldPath = stripPrefix(`a/${match[1]}`);
-  const newPath = stripPrefix(`b/${match[2]}`);
+  if (!line.startsWith('diff --git ')) return { oldPath: null, newPath: null, path: 'unknown' };
+  const oldToken = readGitPathToken(line, 'diff --git '.length);
+  const newToken = oldToken ? readGitPathToken(line, oldToken.end) : null;
+  if (!oldToken || !newToken) return { oldPath: null, newPath: null, path: 'unknown' };
+  const oldPath = stripPrefix(oldToken.path);
+  const newPath = stripPrefix(newToken.path);
   return { oldPath, newPath, path: newPath === '/dev/null' ? oldPath : newPath };
+}
+
+function pathFromMarkerHeader(line: string): string {
+  return readGitPathToken(line, 4)?.path ?? line.slice(4).trim();
 }
 
 function parseHunkHeader(line: string): { oldLine: number; newLine: number } | null {
@@ -59,13 +114,13 @@ export function parseUnifiedDiff(input: string): FilePatch[] {
     if (rawLine.startsWith('deleted file mode') || rawLine.startsWith('+++ /dev/null')) current.isDeleted = true;
     if (rawLine.startsWith('new file mode') || rawLine.startsWith('--- /dev/null')) current.isNew = true;
     if (rawLine.startsWith('--- ')) {
-      const value = stripPrefix(rawLine.slice(4).trim());
+      const value = stripPrefix(pathFromMarkerHeader(rawLine));
       current.oldPath = value === '/dev/null' ? null : value;
       if (!current.path || current.path === 'unknown') current.path = current.oldPath ?? current.path;
       continue;
     }
     if (rawLine.startsWith('+++ ')) {
-      const value = stripPrefix(rawLine.slice(4).trim());
+      const value = stripPrefix(pathFromMarkerHeader(rawLine));
       current.newPath = value === '/dev/null' ? null : value;
       current.path = current.newPath ?? current.oldPath ?? current.path;
       continue;
