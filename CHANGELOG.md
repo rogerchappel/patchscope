@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Decode Git-quoted paths, including UTF-8 octal escapes, spaces, quotes, and backslashes.
+
 ## 0.1.0
 
 Initial MVP release:
