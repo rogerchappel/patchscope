@@ -41,7 +41,7 @@ Patch review often starts with a noisy raw diff. Agents can change many files qu
 ```bash
 patchscope scan --staged --out patchscope.md
 patchscope scan examples/feature.patch --json --fail-on secret,huge-generated
-patchscope suggest-tests --diff examples/feature.patch
+patchscope suggest-tests examples/feature.patch
 ```
 
 ## Functional requirements
