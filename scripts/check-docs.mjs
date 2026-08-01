@@ -1,8 +1,15 @@
-import { readFileSync } from 'node:fs';
-import { globSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { parseArgs } from '../dist/args.js';
 
-const markdownFiles = ['README.md', ...globSync('docs/**/*.md')];
+function markdownFilesIn(directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = `${directory}/${entry.name}`;
+    if (entry.isDirectory()) return markdownFilesIn(path);
+    return entry.isFile() && entry.name.endsWith('.md') ? [path] : [];
+  });
+}
+
+const markdownFiles = ['README.md', ...markdownFilesIn('docs')];
 let checked = 0;
 
 for (const file of markdownFiles) {
