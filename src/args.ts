@@ -24,14 +24,21 @@ export function parseArgs(argv: string[]): ParsedArgs {
     else if (item === '--json') args.json = true;
     else if (item === '--out') {
       const out = rest[++index];
+      if (!out || out.startsWith('-')) throw new Error('--out requires a file path');
+      args.out = out;
+    }
+    else if (item.startsWith('--out=')) {
+      const out = item.slice('--out='.length);
       if (!out) throw new Error('--out requires a file path');
       args.out = out;
     }
-    else if (item.startsWith('--out=')) args.out = item.slice('--out='.length);
     else if (item === '--fail-on') args.failOn = (rest[++index] ?? '').split(',');
     else if (item.startsWith('--fail-on=')) args.failOn = item.slice('--fail-on='.length).split(',');
     else if (item.startsWith('-')) throw new Error(`Unknown option: ${item}`);
-    else args.file = item;
+    else {
+      if (args.file) throw new Error('Choose only one input source: file, --staged, --worktree, or --stdin.');
+      args.file = item;
+    }
   }
 
   const sources = [args.file, args.staged, args.worktree, args.stdin].filter(Boolean).length;
