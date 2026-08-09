@@ -15,6 +15,10 @@ export function parseArgs(argv: string[]): ParsedArgs {
   if (command === 'scan' || command === 'suggest-tests' || command === 'version' || command === 'help') args.command = command;
   else if (command) throw new Error(`Unknown command: ${command}`);
 
+  if ((args.command === 'help' || args.command === 'version') && rest.length > 0) {
+    throw new Error(`${args.command} does not accept operands or options`);
+  }
+
   for (let index = 0; index < rest.length; index += 1) {
     const item = rest[index];
     if (!item) continue;
@@ -32,8 +36,16 @@ export function parseArgs(argv: string[]): ParsedArgs {
       if (!out) throw new Error('--out requires a file path');
       args.out = out;
     }
-    else if (item === '--fail-on') args.failOn = (rest[++index] ?? '').split(',');
-    else if (item.startsWith('--fail-on=')) args.failOn = item.slice('--fail-on='.length).split(',');
+    else if (item === '--fail-on') {
+      const failOn = rest[++index];
+      if (!failOn || failOn.startsWith('-')) throw new Error('--fail-on requires a non-empty class list');
+      args.failOn = failOn.split(',');
+    }
+    else if (item.startsWith('--fail-on=')) {
+      const failOn = item.slice('--fail-on='.length);
+      if (!failOn) throw new Error('--fail-on requires a non-empty class list');
+      args.failOn = failOn.split(',');
+    }
     else if (item.startsWith('-')) throw new Error(`Unknown option: ${item}`);
     else {
       if (args.file) throw new Error('Choose only one input source: file, --staged, --worktree, or --stdin.');
