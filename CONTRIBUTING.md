@@ -37,3 +37,13 @@ Use concise conventional-style messages such as:
 ## Release notes
 
 Update `CHANGELOG.md` for user-visible behavior changes.
+
+## Publishing a release
+
+1. Update `package.json` and `package-lock.json` to the intended semantic version and update `CHANGELOG.md`.
+2. Run `npm ci` and `npm run release:check` on the release commit.
+3. Create and push a tag that is exactly `v` followed by the package version (for example, package version `0.2.0` requires tag `v0.2.0`).
+
+The release workflow rejects malformed or mismatched tags before publishing. It stages a single package tarball in the dedicated `release-artifacts/` directory and passes that exact path to GitHub rather than using a wildcard.
+
+If a workflow run stops after creating the GitHub release, use GitHub Actions to rerun the failed jobs for the same tag. The rerun updates the existing release notes and replaces the expected tarball with `gh release upload --clobber`; it does not move or recreate the tag. Do not delete and repush a release tag to recover a partial run.
