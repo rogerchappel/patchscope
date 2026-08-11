@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -12,7 +12,7 @@ test('accepts a tag matching the package version', () => {
 });
 
 test('rejects malformed and mismatched release tags', () => {
-  for (const tag of ['1.2.3', 'v1.2', 'v01.2.3', 'v1.2.3!']) {
+  for (const tag of ['1.2.3', 'v1.2', 'v01.2.3', 'v1.2.3-01', 'v1.2.3!']) {
     assert.throws(() => assertReleaseTag(tag, '1.2.3'), /release tag/);
   }
   assert.throws(() => assertReleaseTag('v1.2.4', '1.2.3'), /does not match/);
