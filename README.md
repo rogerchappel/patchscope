@@ -70,7 +70,7 @@ Options:
 
 - `--json` renders JSON instead of Markdown.
 - `--out <file>` writes output to a file.
-- `--fail-on <classes>` exits `1` when any listed class or risk level appears.
+- `--fail-on <values>` exits `1` when any listed risk class or risk level appears. Values are comma-separated; surrounding whitespace is ignored. Unknown values and empty list members are rejected with exit code `2` and an error listing every accepted value.
 
 ### `patchscope suggest-tests`
 
@@ -91,6 +91,8 @@ patchscope suggest-tests examples/feature.patch
 - `missing-tests` — source/tooling/config changed without test files in the patch.
 - `missing-docs` — public surface changed without docs in the patch.
 - `delete-heavy` — deletion-heavy patch that deserves focused review.
+
+Accepted risk levels for `--fail-on` are `low`, `medium`, `high`, and `critical`.
 
 ## Safety model
 
