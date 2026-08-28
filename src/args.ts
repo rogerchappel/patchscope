@@ -1,3 +1,33 @@
+import type { RiskClass, RiskLevel } from './types.js';
+
+export const FAIL_ON_VALUES = [
+  'secret',
+  'huge-generated',
+  'generated',
+  'binary',
+  'lockfile',
+  'large-change',
+  'missing-tests',
+  'missing-docs',
+  'delete-heavy',
+  'low',
+  'medium',
+  'high',
+  'critical'
+] as const satisfies readonly (RiskClass | RiskLevel)[];
+
+const failOnValues = new Set<string>(FAIL_ON_VALUES);
+
+function parseFailOn(value: string): string[] {
+  const tokens = value.split(',').map((token) => token.trim());
+  const invalid = tokens.find((token) => !token || !failOnValues.has(token));
+  if (invalid !== undefined) {
+    const displayed = invalid || '<empty>';
+    throw new Error(`Invalid --fail-on value "${displayed}". Accepted values: ${FAIL_ON_VALUES.join(', ')}`);
+  }
+  return tokens;
+}
+
 export interface ParsedArgs {
   command: 'scan' | 'suggest-tests' | 'help' | 'version';
   file?: string;
@@ -39,12 +69,12 @@ export function parseArgs(argv: string[]): ParsedArgs {
     else if (item === '--fail-on') {
       const failOn = rest[++index];
       if (!failOn || failOn.startsWith('-')) throw new Error('--fail-on requires a non-empty class list');
-      args.failOn = failOn.split(',');
+      args.failOn = parseFailOn(failOn);
     }
     else if (item.startsWith('--fail-on=')) {
       const failOn = item.slice('--fail-on='.length);
       if (!failOn) throw new Error('--fail-on requires a non-empty class list');
-      args.failOn = failOn.split(',');
+      args.failOn = parseFailOn(failOn);
     }
     else if (item.startsWith('-')) throw new Error(`Unknown option: ${item}`);
     else {

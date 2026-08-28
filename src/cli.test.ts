@@ -35,6 +35,32 @@ test('CLI rejects missing and empty fail-on class lists', () => {
   }
 });
 
+test('CLI rejects misspelled and empty fail-on list members', () => {
+  for (const [option, token] of [
+    ['--fail-on=secrett', 'secrett'],
+    ['--fail-on=secret,,critical', '<empty>']
+  ] as const) {
+    const result = runCli(['scan', 'examples/secret.patch', option]);
+
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, new RegExp(`Invalid --fail-on value "${token}"`));
+    assert.match(result.stderr, /Accepted values: secret, huge-generated/);
+  }
+});
+
+test('CLI accepts class lists and risk levels in both fail-on option forms', () => {
+  for (const args of [
+    ['scan', 'examples/secret.patch', '--fail-on', 'generated, secret'],
+    ['scan', 'examples/secret.patch', '--fail-on=critical']
+  ]) {
+    const result = runCli(args);
+
+    assert.equal(result.status, 1);
+    assert.equal(result.stderr, '');
+  }
+});
+
 test('CLI rejects unsupported help and version operands and options', () => {
   for (const [command, argument] of [
     ['help', 'extra'],
