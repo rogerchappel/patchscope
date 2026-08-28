@@ -33,6 +33,31 @@ test('rejects every missing or empty --fail-on value form', () => {
   }
 });
 
+test('rejects unknown and empty --fail-on list members', () => {
+  for (const [value, token] of [
+    ['secrett', 'secrett'],
+    ['secret,,generated', '<empty>'],
+    [',secret', '<empty>'],
+    ['secret,', '<empty>']
+  ] as const) {
+    assert.throws(
+      () => parseArgs(['scan', 'input.patch', '--fail-on', value]),
+      { message: `Invalid --fail-on value "${token}". Accepted values: secret, huge-generated, generated, binary, lockfile, large-change, missing-tests, missing-docs, delete-heavy, low, medium, high, critical` }
+    );
+  }
+});
+
+test('normalizes valid --fail-on classes and risk levels in both option forms', () => {
+  assert.deepEqual(
+    parseArgs(['scan', 'input.patch', '--fail-on', ' secret, generated,high ']).failOn,
+    ['secret', 'generated', 'high']
+  );
+  assert.deepEqual(
+    parseArgs(['scan', 'input.patch', '--fail-on=critical,missing-tests']).failOn,
+    ['critical', 'missing-tests']
+  );
+});
+
 test('rejects operands and options for help and version', () => {
   for (const command of ['help', 'version']) {
     assert.throws(() => parseArgs([command, 'extra']), { message: `${command} does not accept operands or options` });
