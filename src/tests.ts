@@ -2,6 +2,12 @@ import { readPackageScripts, packageManagerCommand } from './package-scripts.js'
 import { subsystemFor } from './paths.js';
 import type { FilePatch, TestSuggestion } from './types.js';
 
+const CONFIDENCE_ORDER: Record<TestSuggestion['confidence'], number> = {
+  high: 0,
+  medium: 1,
+  low: 2
+};
+
 function addUnique(target: TestSuggestion[], suggestion: TestSuggestion): void {
   if (!target.some((item) => item.command === suggestion.command)) target.push(suggestion);
 }
@@ -30,5 +36,5 @@ export function suggestTests(files: FilePatch[], cwd = process.cwd()): TestSugge
   if (hasDocsOnly) addUnique(suggestions, { command: 'markdown link/style review', reason: 'documentation-only patch', confidence: 'low' });
   if (!suggestions.length) addUnique(suggestions, { command: 'git diff --stat', reason: 'no package scripts detected; inspect patch footprint manually', confidence: 'low' });
 
-  return suggestions.sort((a, b) => b.confidence.localeCompare(a.confidence) || a.command.localeCompare(b.command));
+  return suggestions.sort((a, b) => CONFIDENCE_ORDER[a.confidence] - CONFIDENCE_ORDER[b.confidence] || a.command.localeCompare(b.command));
 }
