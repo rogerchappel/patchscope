@@ -61,6 +61,19 @@ test('CLI accepts class lists and risk levels in both fail-on option forms', () 
   }
 });
 
+test('CLI prints high-confidence suggestions before medium-confidence suggestions', () => {
+  const result = runCli(['suggest-tests', 'examples/feature.patch']);
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+  const lines = result.stdout.trim().split('\n');
+  assert.deepEqual(lines.slice(0, 2), [
+    'npm run smoke # source or CLI tooling changed (high)',
+    'npm run test # package.json defines test (high)'
+  ]);
+  assert.ok(lines.slice(2).every((line) => line.endsWith('(medium)')));
+});
+
 test('CLI rejects unsupported help and version operands and options', () => {
   for (const [command, argument] of [
     ['help', 'extra'],
