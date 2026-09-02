@@ -11,5 +11,9 @@ test('renders deterministic markdown and json reports', () => {
   const json = renderJson(result);
   assert.match(markdown, /# PatchScope Report/);
   assert.match(markdown, /src\/service\.ts/);
-  assert.equal(JSON.parse(json).generatedAt, 'deterministic-local');
+  const parsed = JSON.parse(json);
+  assert.equal(parsed.generatedAt, 'deterministic-local');
+  const markdownCommands = [...markdown.matchAll(/^- `([^`]+)` — .* \((high|medium|low)\)$/gm)].map((match) => match[1]);
+  assert.deepEqual(markdownCommands, parsed.tests.map((suggestion: { command: string }) => suggestion.command));
+  assert.deepEqual(parsed.tests.slice(0, 2).map((suggestion: { confidence: string }) => suggestion.confidence), ['high', 'high']);
 });
