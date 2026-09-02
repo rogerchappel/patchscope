@@ -80,6 +80,8 @@ Prints likely verification commands only:
 patchscope suggest-tests examples/feature.patch
 ```
 
+Suggestions use a stable confidence order: high, then medium, then low. Commands within the same confidence tier are sorted alphabetically, and `scan` Markdown/JSON output preserves the same order.
+
 ## Risk classes
 
 - `secret` — secret-like added values, always redacted.
